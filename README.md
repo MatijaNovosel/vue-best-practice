@@ -46,7 +46,7 @@ Struktura projekta podijeljena je na tri dijela: `admin`, `user` i `shared`.
 
 Admin i user dio sastoje se od specifične strukture direktorija:
 
-- `components` - sadrži .vue komponente koje mogu biti unutar posebnih direktorija ovisno o situaciji npr. folder timeline s komponentama timeline-list.vue i timeline-item.vue
+- `components` - sadrži .vue komponente koje mogu biti unutar posebnih direktorija ovisno o situaciji npr. folder timeline s komponentama `timeline-list.vue` i `timeline-item.vue`
 - `layouts` – sadrži .vue datoteke kojima se opisuje struktura sučelja, naročito navigacijske komponente kao i router view
 - `modules` – niz direktorija kojima se opisuju dijelovi aplikacije, odvojeni po svojoj svrsi npr. module lines se bavi dijelom aplikacije zaduženim za informacije i - funkcionalnosti autobusnih linija. Svaki modul sastoji se od slične strukture direktorija izuzev direktorija layouts.
 - `routes` – popis ruta aplikacije, stvoreno od spajanja ruta modula zajedno
