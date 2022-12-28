@@ -29,7 +29,7 @@ Kako bi se moglo raditi na ovom projektu efektivno, potrebno je instalirati slje
   - [Error Lens](https://marketplace.visualstudio.com/items?itemName=usernamehw.errorlens)
   - [TODO Highlight](https://marketplace.visualstudio.com/items?itemName=wayou.vscode-todo-highlight)
 
-Za automatsko formatiranje i uklanjanje bespotrebnih importova potrebno je unutar `settings.json` unutar Visual Studio Coda postaviti sljedeće:
+Za automatsko formatiranje i uklanjanje bespotrebnih importova potrebno je unutar `settings.json` Visual Studio Coda postaviti sljedeće:
 
 ```json
 "editor.formatOnSave": true,
