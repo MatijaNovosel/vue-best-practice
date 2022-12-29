@@ -354,6 +354,29 @@ Kod definicije reaktivnog stanja koristi se ili `ref` ili `reactive`. Najbolje j
 
 Svaki reaktivni objekt potrebno je tipizirati `interface`-om. **Ne** tipizirati stanje generičkim parametrom koji nudi `reactive`.
 
+<table>
+<tr align="center">
+<td> 🟥 </td> <td> 🟩 </td>
+</tr>
+<tr>
+<tr>
+<td>
+
+```typescript
+interface State {
+  a: number;
+  b: string;
+}
+
+const state = reactive<State>({
+  a: 1,
+  b: "string"
+});
+```
+
+</td>
+<td>
+
 ```typescript
 interface State {
   a: number;
@@ -365,6 +388,10 @@ const state: State = reactive({
   b: "string"
 });
 ```
+
+</td>
+</tr>
+</table>
 
 `ref` koristiti jedino kod povezivanja komponenti na sučelju sa `<script>`.
 
