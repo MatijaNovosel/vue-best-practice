@@ -38,6 +38,8 @@ Za automatsko formatiranje i uklanjanje bespotrebnih importova potrebno je unuta
 },
 ```
 
+Pravila za formatiranje koda već su definirana unutar `.prettierrc` datoteke, a Prettier će ih sam interpretirati na automatskom formatiranju pa ne dolazi do razlike u pisanju koda kod različitih ljudi.
+
 ## 🚀 Uvod
 
 Struktura projekta podijeljena je na tri dijela: `admin`, `user` i `shared`.
@@ -74,6 +76,9 @@ Unutar shared direktorija nalaze se datoteke koje su potrebne na globalnoj razin
 
 - Imena datoteka Viewova i komponenta se pišu u PascalCasu, modeli i typescript/javascript datoteke u camelCasu
 - CSS klase, id-evi, propovi, emitovi i slično pišu se isključivo u kebab-casu
+- Uvijek zatvarati elemente ako nemaju ničega u sebi
+- Ako element ima nešto u sebi onda posložiti na smisleni način i odvojiti s `\n` kako sve nebi bilo u jednom redu
+- Uvijek koristiti shorthand sintaksu za listenere, slotove i slično
 
 <table>
 <tr align="center">
@@ -85,10 +90,12 @@ Unutar shared direktorija nalaze se datoteke koje su potrebne na globalnoj razin
 
 ```html
 <imeNekeKomponente
+  v-on:click="klikHandler"
   class="nekaKlasa klasa2"
   @nekiEmit="funkcija"
   nekiProp="xyz"
-/>
+  ><dijeteKomponenta
+/></imeNekeKomponente>
 ```
 
 </td>
@@ -96,10 +103,13 @@ Unutar shared direktorija nalaze se datoteke koje su potrebne na globalnoj razin
 
 ```html
 <ime-neke-komponente
+  @click="klikHandler"
   class="neka-klasa klasa-2"
   @neki-emit="funkcija"
   neki-prop="xyz"
-/>
+>
+  <dijete-komponenta />
+</ime-neke-komponente>
 ```
 
 </td>
@@ -107,6 +117,104 @@ Unutar shared direktorija nalaze se datoteke koje su potrebne na globalnoj razin
 </table>
 
 - Sav CSS koji nije `scoped` pisati unutar globalnog css-a
+- Izbjegavati tip `any` ako je moguće
+- Ako je potrebno napisati neku kratku funkciju ili helper, rađe je implementirati sam u `helpers.ts` nego instalirati posebni package za to jer postoje [ogromni problemi](https://qz.com/646467/how-one-programmer-broke-the-internet-by-deleting-a-tiny-piece-of-code) s 3rd party packagima
+- Umjesto pisanja cijele funkcije s već poznatim ključnim riječima, pisati anonimne funkcije i spremati u varijable s obzirom da se `this` rijetko koristi
+
+<table>
+<tr align="center">
+<td> 🟥 </td> <td> 🟩 </td>
+</tr>
+<tr>
+<tr>
+<td>
+
+```typescript
+async function funkcija() {
+  return await nesto();
+}
+```
+
+</td>
+<td>
+
+```typescript
+const funkcija = async () => {
+  return await nesto();
+};
+```
+
+</td>
+</tr>
+</table>
+
+- Tipizirati povratne tipove funkcija i varijable, osim naravno u slučajevima gdje je evidentno koji je povratni tip iz intellisensa
+- Ako se servis koristi na više mjesta unutar datoteke onda ga postaviti jednom na vrhu i pozivati funkcije preko varijable kojom je definiran, a ne pojedinačnim instanciranjem tog servisa i njegovih funkcija
+
+<table>
+<tr align="center">
+<td> 🟥 </td> <td> 🟩 </td>
+</tr>
+<tr>
+<tr>
+<td>
+
+```typescript
+await getService<IService>(Types.Service).getData();
+await getService<IService>(Types.Service).sendData({ data: 1 });
+```
+
+</td>
+<td>
+
+```typescript
+const service = getService<IService>(Types.Service);
+await service.getData();
+await service.sendData({ data: 1 });
+```
+
+</td>
+</tr>
+</table>
+
+- Gdje god moguće, ako nema dodatnih pretvorbi, koristiti shorthand sintaksu za povratnu vrijednost funkcija za polja poput `map`, `reduce` i slično
+
+<table>
+<tr align="center">
+<td> 🟥 </td> <td> 🟩 </td>
+</tr>
+<tr>
+<tr>
+<td>
+
+```typescript
+const newItems = items.map((item) => {
+  return {
+    name: item.fullName,
+    id: item.id
+  };
+});
+
+const sum = items.reduce((acc, item) => {
+  return acc + item.amount;
+});
+```
+
+</td>
+<td>
+
+```typescript
+const newItems = items.map((item) => ({
+  name: item.fullName,
+  id: item.id
+}));
+
+const sum = items.reduce((acc, item) => acc + item.amount);
+```
+
+</td>
+</tr>
+</table>
 
 ## 📦 Propovi
 
@@ -240,6 +348,94 @@ const showDetails = (id: number) => {
 };
 ```
 
+## ✨ Reaktivno stanje
+
+Kod definicije reaktivnog stanja koristi se ili `ref` ili `reactive`. Najbolje je uvijek koristiti `reactive` jer nije potrebno unwrappati referencu i kod velike količine podataka bolje je sve imati na jednom mjestu.
+
+Svaki reaktivni objekt potrebno je tipizirati `interface`-om. **Ne** tipizirati stanje generičkim parametrom koji nudi `reactive`.
+
+```typescript
+interface State {
+  a: number;
+  b: string;
+}
+
+const state: State = reactive({
+  a: 1,
+  b: "string"
+});
+```
+
+`ref` koristiti jedino kod povezivanja komponenti na sučelju sa `<script>`.
+
+## 👻 Uvjetovani prikaz
+
+Ako je potrebno uvjetovano prikazati više elemenata, wrappati ih unutar `<template>` komponente jer ona ne utječe na DOM.
+
+```html
+<template v-if="uvjet1">
+  <komponenta-a />
+  <komponenta-b />
+</template>
+<komponenta-c v-else-if="uvjet2" />
+<komponenta-d v-else-if="uvjet3" />
+<komponenta-e v-else />
+```
+
+## 🔁 Petlje
+
+Obavezno navesti `key` prop kod `v-for` petlje, po mogućnosti koristiti neki property od izvora podataka koji se iterira. Ako to nije mogućnost, onda koristiti drugi parametar prilikom iteracije tj. index.
+
+```html
+<komponenta v-for="item in items" :key="item.id" />
+<komponenta v-for="(item, i) in items" :key="i" />
+```
+
+U slučaju da je potrebno uvjetovano prikazati petlju, wrappati je unutar `<template>` komponente.
+
+```html
+<template v-if="uvjet">
+  <komponenta v-for="item in items" :key="item.id" />
+</template>
+```
+
+## 🧩 Slotovi
+
+Slotove uvijek treba pisati skraćenim načinom pomoću `#`, npr. umjesto `v-slot:something` ide `#something`.
+
+```html
+<komponenta>
+  <template #something="{ model }"> {{ model }} </template>
+</komponenta>
+```
+
+Nikad ne izričito navoditi defaultni slot, već direktno stavljati isti sadržaj u tijelo elementa.
+
+<table>
+<tr align="center">
+<td> 🟥 </td> <td> 🟩 </td>
+</tr>
+<tr>
+<tr>
+<td>
+
+```html
+<komponenta>
+  <template #default> Tekst </template>
+</komponenta>
+```
+
+</td>
+<td>
+
+```html
+<komponenta> Tekst </komponenta>
+```
+
+</td>
+</tr>
+</table>
+
 ## 🏳️ Prijevodi
 
 Za prijevode koristi se [i18n](https://kazupon.github.io/vue-i18n/) package.
@@ -313,3 +509,128 @@ Svaka referenca je potencijalno nullabilna pa se i taj slučaj mora očekivati.
 ### validation-provider
 
 Svaki `validation-provider` mora imati definiran `vid`, `name`, `rules` i exposati ostale propertye po potrebi preko `v-slot`-a.
+
+## 🔷 Vuetify
+
+- Gdje god moguće ako postoji gotova funkcionalnost na samoj komponenti, ne kombinirati druge komponente kako bi se postigla funkcionalnost, primjerice `v-data-table` i `v-pagination` jer `v-data-table` već ima funkcionalnost paginacije
+- Pravilno posložiti komponente i ugnijezditi ih na način kako je opisano u dokumentaciji osim u vanrednim situacijama, primjerice `v-card`:
+
+```html
+<v-card>
+  <v-card-title> Title </v-card-title>
+  <v-card-subtitle> Subtitle </v-card-subtitle>
+  <v-card-text> Nešto </v-card-text>
+  <v-card-actions>
+    <v-btn> Klikni me </v-btn>
+  </v-card-actions>
+</v-card>
+```
+
+### Grid sistem
+
+Gdje god moguće potrebno je koristiti `v-row` i `v-col` za organiziranje sučelja. Za svaki `v-col` navesti količinu stupaca preko `cols` propa, a po potrebi dalje za različite dimenzije.
+
+Primjerice, pola za ekrane prosječne veličine (desktop itd.) i trećina za veće ekrane:
+
+```html
+<v-row>
+  <v-col cols="12" md="6" xl="4"> Tekst </v-col>
+</v-row>
+```
+
+### Popisi (`<v-list />`)
+
+Pravilno posložiti popise kao što je opisano u dokumentaciji, a kod popisa gdje je potrebno imati odabranu stavku potrebno je pravilno handlati tu situaciju:
+
+```html
+<v-list>
+  <v-list-item-group
+    mandatory
+    color="primary"
+    v-model="state.selectedItem"
+    @change="stationSelected"
+  >
+    <v-list-item v-for="(item, i) in items" :key="i" :value="item">
+      <v-list-item-content>
+        <v-list-item-title> {{ item.name }} </v-list-item-title>
+      </v-list-item-content>
+    </v-list-item>
+  </v-list-item-group>
+</v-list>
+```
+
+Koristiti ili `watch` funkciju ili `@change` listener za eventualne promjene nad listom, **nikad** ručno postavljati stavku jer `v-model` to već sam handla.
+
+### `<v-data-table />`
+
+S obzirom da se skoro uvijek koristi server-sided paginacija, organizirati komponentu na sljedeći način:
+
+```html
+<v-data-table
+  item-key="id"
+  :loading="state.loading"
+  :headers="headers"
+  :items="state.items"
+  @update:options="getData"
+  :options.sync="state.tableOptions"
+  :footer-props="{ itemsPerPageOptions }"
+  :server-items-length="state.totalItems"
+/>
+```
+
+```typescript
+interface State {
+  items: Model[];
+  tableOptions: IGridOptions;
+  totalItems: number;
+}
+
+const state: State = reactive({
+  items: [],
+  tableOptions: {
+    page: 1,
+    itemsPerPage: 25,
+    sortBy: [],
+    sortDesc: [],
+    groupBy: [],
+    groupDesc: []
+  },
+  totalItems: 0
+});
+
+const headers = [
+  {
+    text: "Text",
+    value: "id",
+    sortable: true
+  },
+  {
+    text: "",
+    value: "actions",
+    align: "right",
+    width: "120",
+    sortable: false
+  }
+];
+
+const itemsPerPageOptions = [10, 25, 50];
+
+const getData = async () => {
+  state.loading = true;
+  const { skip, take, sort, group } = transformVuetifyTableOptions(
+    state.tableOptions
+  );
+  try {
+    const { total, results } = await someService.getItems(
+      skip,
+      take,
+      sort,
+      group
+    );
+    state.totalItems = total;
+    state.items = results;
+  } finally {
+    state.loading = false;
+  }
+};
+```
