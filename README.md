@@ -6,6 +6,8 @@
 
 S obzirom da na projektu rade više ljudi istovremeno, dolazimo do problema gdje se ne držimo istog standarda za pisanje koda na frontendu. Ovaj README služi tome i u njemu će biti razjašnjeno kojeg bi se standarda trebali držati.
 
+Opisuju se ujedno i tehnički detalji i oni koji se tiču stiliziranja koda.
+
 ## 📚 Sadržaj
 
 Dodati sadržaj ovdje.
@@ -75,6 +77,8 @@ Unutar shared direktorija nalaze se datoteke koje su potrebne na globalnoj razin
 ## 🌍 Generalno
 
 - Imena datoteka Viewova i komponenta se pišu u PascalCasu, modeli i typescript/javascript datoteke u camelCasu
+- Ako moguće, uvijek koristiti klase i izbjegavati inline stiliziranje
+- Koristiti gotove **Vuetify** CSS klase ako postoje za određenu situaciju, ako ne onda napisati svoje u globalnoj css datoteci `site.css`
 - CSS klase, id-evi, propovi, emitovi i slično pišu se isključivo u kebab-casu
 - Uvijek zatvarati elemente ako nemaju ničega u sebi
 - Ako element ima nešto u sebi onda posložiti na smisleni način i odvojiti s `\n` kako sve nebi bilo u jednom redu
@@ -197,7 +201,7 @@ const newItems = items.map((item) => {
 
 const sum = items.reduce((acc, item) => {
   return acc + item.amount;
-});
+}, 0);
 ```
 
 </td>
@@ -209,12 +213,120 @@ const newItems = items.map((item) => ({
   id: item.id
 }));
 
-const sum = items.reduce((acc, item) => acc + item.amount);
+const sum = items.reduce((acc, item) => acc + item.amount, 0);
 ```
 
 </td>
 </tr>
 </table>
+
+- Koristiti `computed` umjesto funkcija koje vraćaju neku pretvorenu vrijednost, barem za reaktivne vrijednosti
+
+<table>
+<tr align="center">
+<td> 🟥 </td> <td> 🟩 </td>
+</tr>
+<tr>
+<tr>
+<td>
+
+```html
+<komponenta v-for="(item, i) in itemsFiltered()" :key="i" />
+```
+
+```typescript
+const itemsFiltered = () => items.map((n) => n ** 2);
+```
+
+</td>
+<td>
+
+```html
+<komponenta v-for="(item, i) in itemsFiltered" :key="i" />
+```
+
+```typescript
+const itemsFiltered = computed(() => items.map((n) => n ** 2));
+```
+
+</td>
+</tr>
+</table>
+
+- Uvijek koristiti `T[]` kod definicije tipova polja umjesto `Array<T>`
+- Redoslijed dijelova koda unutar `<script>` bi idealno trebao ići ovako:
+
+1. Definicija `interface`-a za stanje i ostale dodatne modele po potrebi (kod Vue 2 ovo raditi van `defineComponent` funkcije)
+2. Propovi
+3. Emitovi
+4. Composable funkcije
+5. Konstantne varijable i `ref`-ovi
+6. Stanje
+7. Funkcije
+8. `computed` vrijednosti
+9. `watch`-evi
+10. Lifecycle funkcije
+
+```typescript
+// 1
+interface Item {
+  description: string;
+  amount: number;
+}
+
+interface State {
+  name: string;
+  id: number;
+  items: Item[];
+}
+
+// 2
+const props = defineProps({
+  id: Number
+});
+
+// 3
+const emit = defineEmits(["select-item", "do-something"]);
+
+// 4
+const router = useRouter();
+const i18n = usei18n();
+
+// 5
+const headers = [{ text: "Text", value: "id" }];
+const form = ref<IForm | null>(null);
+const canvas = ref<HTMLCanvasElement | null>(null);
+
+// 6
+const state: State = reactive({
+  name: "",
+  id: 1,
+  items: []
+});
+
+// 7
+const doSomething = () => {
+  emit("do-something", { x: 1 });
+};
+
+// 8
+const itemsSum = computed(() =>
+  items.reduce((acc, item) => acc + item.amount, 0)
+);
+
+// 9
+watch(
+  () => props.id,
+  (val) => {
+    console.log(val);
+  }
+);
+
+// 10
+onMounted(() => {
+  console.log("Mounted!");
+});
+```
 
 ## 📦 Propovi
 
@@ -265,6 +377,15 @@ defineProps({
 
 ```html
 <person-details person-name="Branko" />
+```
+
+Ako nema potrebe za ostalim propertyima kod definicije propova, onda se može ostaviti samo tip:
+
+```typescript
+defineProps({
+  name: String,
+  id: Number
+});
 ```
 
 **Nadalje se neće odavajati sintaksa po Vue verzijama jer je definiranje propova identično.**
@@ -540,6 +661,7 @@ Svaki `validation-provider` mora imati definiran `vid`, `name`, `rules` i exposa
 ## 🔷 Vuetify
 
 - Gdje god moguće ako postoji gotova funkcionalnost na samoj komponenti, ne kombinirati druge komponente kako bi se postigla funkcionalnost, primjerice `v-data-table` i `v-pagination` jer `v-data-table` već ima funkcionalnost paginacije
+- Overridanje Vuetify CSS klasa raditi uz pomoć `::v-deep` selectora
 - Pravilno posložiti komponente i ugnijezditi ih na način kako je opisano u dokumentaciji osim u vanrednim situacijama, primjerice `v-card`:
 
 ```html
@@ -586,7 +708,7 @@ Pravilno posložiti popise kao što je opisano u dokumentaciji, a kod popisa gdj
 </v-list>
 ```
 
-Koristiti ili `watch` funkciju ili `@change` listener za eventualne promjene nad listom, **nikad** ručno postavljati stavku jer `v-model` to već sam handla.
+Koristiti ili `watch` funkciju ili `@change` listener za eventualne promjene nad listom, **nikad** ručno postavljati stavku jer `v-model` to već sam handla preko `value` propa navedenog na `<v-list-item>` komponenti
 
 ### `<v-data-table />`
 
