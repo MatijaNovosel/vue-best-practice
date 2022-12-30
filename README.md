@@ -159,6 +159,31 @@ interface NekiModel {
 
 - Sav CSS koji nije `scoped` pisati unutar globalnog css-a
 - Izbjegavati tip `any` ako je moguće
+- Što više koristiti string literalse umjesto konkatenacije stringova
+
+<table>
+<tr align="center">
+<td> 🟥 </td> <td> 🟩 </td>
+</tr>
+<tr>
+<tr>
+<td>
+
+```typescript
+const name = firstName + " " + middleName + " " + lastName;
+```
+
+</td>
+<td>
+
+```typescript
+const name = `${firstName} ${middleName} ${lastName}`;
+```
+
+</td>
+</tr>
+</table>
+
 - Ako je potrebno napisati neku kratku funkciju ili helper, rađe je implementirati sam u `helpers.ts` nego instalirati posebni package za to jer postoje [ogromni problemi](https://qz.com/646467/how-one-programmer-broke-the-internet-by-deleting-a-tiny-piece-of-code) s 3rd party packagima
 - Umjesto pisanja cijele funkcije s već poznatim ključnim riječima, pisati anonimne funkcije i spremati u varijable s obzirom da se `this` rijetko koristi
 
