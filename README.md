@@ -101,7 +101,7 @@ Unutar shared direktorija nalaze se datoteke koje su potrebne na globalnoj razin
 
 ## Generalno
 
-- Imena datoteka Viewova i komponenta se pišu u PascalCasu, modeli i typescript/javascript datoteke u camelCasu
+- Imena datoteka Viewova, komponenta i modela se pišu u PascalCasu, imena typescript/javascript datoteke i datoteka modela u camelCasu
 - Ako moguće, uvijek koristiti klase i izbjegavati inline stiliziranje
 - Koristiti gotove **Vuetify** CSS klase ako postoje za određenu situaciju, ako ne onda napisati svoje u globalnoj css datoteci `site.css`
 - CSS klase, id-evi, propovi, emitovi i slično pišu se isključivo u kebab-casu
@@ -117,6 +117,12 @@ Unutar shared direktorija nalaze se datoteke koje su potrebne na globalnoj razin
 <tr>
 <td>
 
+```typescript
+interface nekiModel {
+  name: string;
+}
+```
+
 ```html
 <imeNekeKomponente
   v-on:click="klikHandler"
@@ -129,6 +135,12 @@ Unutar shared direktorija nalaze se datoteke koje su potrebne na globalnoj razin
 
 </td>
 <td>
+
+```typescript
+interface NekiModel {
+  name: string;
+}
+```
 
 ```html
 <ime-neke-komponente
