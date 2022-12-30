@@ -605,7 +605,7 @@ Svaki skup polja mora biti unutar točno određene forme, primjerice:
       <v-col cols="12">
         <validation-provider
           vid="fieldVid"
-          :name="$t('language')"
+          name="Language"
           rules="required"
           v-slot="{ errors, required }"
         >
@@ -657,6 +657,10 @@ Svaka referenca je potencijalno nullabilna pa se i taj slučaj mora očekivati.
 ### validation-provider
 
 Svaki `validation-provider` mora imati definiran `vid`, `name`, `rules` i exposati ostale propertye po potrebi preko `v-slot`-a.
+
+Svaki `vid` mora biti jedinstven, kao i `name` prop jer u protivnom dolazi do poremećaja u validaciji.
+
+Iako je naveden `label` prop kod polja, mora biti naveden i u overridanom slotu za label ako je potrebno da polje bude `required`.
 
 ## 🔷 Vuetify
 
