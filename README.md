@@ -8,11 +8,36 @@ S obzirom da na projektu rade više ljudi istovremeno, dolazimo do problema gdje
 
 Opisuju se ujedno i tehnički detalji i oni koji se tiču stiliziranja koda.
 
-## 📚 Sadržaj
+## Sadržaj
 
-Dodati sadržaj ovdje.
+- [Preduvjeti](#preduvjeti)
+- [Uvod](#uvod)
+  - [Admin i user](#admin-i-user)
+  - [Shared](#shared)
+- [Generalno](#generalno)
+- [Propovi](#propovi)
+  - [Vue 2](#vue-2)
+  - [Vue 3](#vue-3)
+  * [Tipiziranje](#tipiziranje)
+    - [Object](#object)
+    - [Array](#array)
+- [Emitovi](#emitovi)
+  - [Vue 2](#vue-2-1)
+  - [Vue 3](#vue-3-1)
+- [Reaktivno stanje](#reaktivno-stanje)
+- [Uvjetovani prikaz](#uvjetovani-prikaz)
+- [Petlje](#petlje)
+- [Slotovi](#slotovi)
+- [Prijevodi](#prijevodi)
+- [Validacija](#validacija)
+  - [validation-observer](#validation-observer)
+  - [validation-provider](#validation-provider)
+- [Vuetify](#vuetify)
+  - [Grid sistem](#grid-sistem)
+  - [v-list](#v-list)
+  - [v-data-table](#v-data-table)
 
-## ⚙️ Preduvjeti
+## Preduvjeti
 
 Kako bi se moglo raditi na ovom projektu efektivno, potrebno je instalirati sljedeće:
 
@@ -42,11 +67,11 @@ Za automatsko formatiranje i uklanjanje bespotrebnih importova potrebno je unuta
 
 Pravila za formatiranje koda već su definirana unutar `.prettierrc` datoteke, a Prettier će ih sam interpretirati na automatskom formatiranju pa ne dolazi do razlike u pisanju koda kod različitih ljudi.
 
-## 🚀 Uvod
+## Uvod
 
 Struktura projekta podijeljena je na tri dijela: `admin`, `user` i `shared`.
 
-### Admin & user
+### Admin i user
 
 Admin i user dio sastoje se od specifične strukture direktorija:
 
@@ -74,7 +99,7 @@ Unutar shared direktorija nalaze se datoteke koje su potrebne na globalnoj razin
 - `translations` – prijevodi na engleskom i hrvatskom jeziku
 - `validators` – dodatne definicije validacija za forme i polja
 
-## 🌍 Generalno
+## Generalno
 
 - Imena datoteka Viewova i komponenta se pišu u PascalCasu, modeli i typescript/javascript datoteke u camelCasu
 - Ako moguće, uvijek koristiti klase i izbjegavati inline stiliziranje
@@ -254,6 +279,22 @@ const itemsFiltered = computed(() => items.map((n) => n ** 2));
 </table>
 
 - Uvijek koristiti `T[]` kod definicije tipova polja umjesto `Array<T>`
+- Redoslijed propova bi idealno trebao ići ovako:
+
+1. "Statički" propovi
+2. "Dinamički" propovi
+3. Emitovi
+
+```html
+<komponenta
+  prop-1="Prop"
+  prop-2="5"
+  :prop-3="4 + 5"
+  :prop-4="x ** 2"
+  @neki-emit="funkcija"
+/>
+```
+
 - Redoslijed dijelova koda unutar `<script>` bi idealno trebao ići ovako:
 
 1. Definicija `interface`-a za stanje i ostale dodatne modele po potrebi (kod Vue 2 ovo raditi van `defineComponent` funkcije)
@@ -328,7 +369,7 @@ onMounted(() => {
 });
 ```
 
-## 📦 Propovi
+## Propovi
 
 #### Vue 2
 
@@ -431,7 +472,7 @@ defineProps({
 });
 ```
 
-## 🎉 Emitovi
+## Emitovi
 
 #### Vue 2
 
@@ -469,11 +510,11 @@ const showDetails = (id: number) => {
 };
 ```
 
-## ✨ Reaktivno stanje
+## Reaktivno stanje
 
 Kod definicije reaktivnog stanja koristi se ili `ref` ili `reactive`. Najbolje je uvijek koristiti `reactive` jer nije potrebno unwrappati referencu i kod velike količine podataka bolje je sve imati na jednom mjestu.
 
-Svaki reaktivni objekt potrebno je tipizirati `interface`-om. **Ne** tipizirati stanje generičkim parametrom koji nudi `reactive`.
+Svaki reaktivni objekt potrebno je tipizirati `interface`-om. **Ne** tipizirati stanje generičkim parametrom koji nudi `reactive` kako je [opisano u dokumentaciji](https://vuejs.org/guide/typescript/composition-api.html#typing-reactive).
 
 <table>
 <tr align="center">
@@ -516,7 +557,7 @@ const state: State = reactive({
 
 `ref` koristiti jedino kod povezivanja komponenti na sučelju sa `<script>`.
 
-## 👻 Uvjetovani prikaz
+## Uvjetovani prikaz
 
 Ako je potrebno uvjetovano prikazati više elemenata, wrappati ih unutar `<template>` komponente jer ona ne utječe na DOM.
 
@@ -530,7 +571,7 @@ Ako je potrebno uvjetovano prikazati više elemenata, wrappati ih unutar `<templ
 <komponenta-e v-else />
 ```
 
-## 🔁 Petlje
+## Petlje
 
 Obavezno navesti `key` prop kod `v-for` petlje, po mogućnosti koristiti neki property od izvora podataka koji se iterira. Ako to nije mogućnost, onda koristiti drugi parametar prilikom iteracije tj. index.
 
@@ -547,7 +588,7 @@ U slučaju da je potrebno uvjetovano prikazati petlju, wrappati je unutar `<temp
 </template>
 ```
 
-## 🧩 Slotovi
+## Slotovi
 
 Slotove uvijek treba pisati skraćenim načinom pomoću `#`, npr. umjesto `v-slot:something` ide `#something`.
 
@@ -584,13 +625,13 @@ Nikad ne izričito navoditi defaultni slot, već direktno stavljati isti sadrža
 </tr>
 </table>
 
-## 🏳️ Prijevodi
+## Prijevodi
 
 Za prijevode koristi se [i18n](https://kazupon.github.io/vue-i18n/) package.
 
 `en.ts` se koristi za engleske i `hr.ts` za hrvatske prijevode, najbolje ih je organizirati po screenovima ili po nekim generalnim pojmovima.
 
-## ✅ Validacija
+## Validacija
 
 Za validaciju koristi se component-based [vee-validate](https://vee-validate.logaretm.com/v3/guide/basics.html) library.
 
@@ -662,7 +703,7 @@ Svaki `vid` mora biti jedinstven, kao i `name` prop jer u protivnom dolazi do po
 
 Iako je naveden `label` prop kod polja, mora biti naveden i u overridanom slotu za label ako je potrebno da polje bude `required`.
 
-## 🔷 Vuetify
+## Vuetify
 
 - Gdje god moguće ako postoji gotova funkcionalnost na samoj komponenti, ne kombinirati druge komponente kako bi se postigla funkcionalnost, primjerice `v-data-table` i `v-pagination` jer `v-data-table` već ima funkcionalnost paginacije
 - Overridanje Vuetify CSS klasa raditi uz pomoć `::v-deep` selectora
@@ -691,7 +732,7 @@ Primjerice, pola za ekrane prosječne veličine (desktop itd.) i trećina za ve�
 </v-row>
 ```
 
-### Popisi (`<v-list />`)
+### v-list
 
 Pravilno posložiti popise kao što je opisano u dokumentaciji, a kod popisa gdje je potrebno imati odabranu stavku potrebno je pravilno handlati tu situaciju:
 
@@ -714,7 +755,7 @@ Pravilno posložiti popise kao što je opisano u dokumentaciji, a kod popisa gdj
 
 Koristiti ili `watch` funkciju ili `@change` listener za eventualne promjene nad listom, **nikad** ručno postavljati stavku jer `v-model` to već sam handla preko `value` propa navedenog na `<v-list-item>` komponenti
 
-### `<v-data-table />`
+### v-data-table
 
 S obzirom da se skoro uvijek koristi server-sided paginacija, organizirati komponentu na sljedeći način:
 
