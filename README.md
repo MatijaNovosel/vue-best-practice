@@ -67,6 +67,18 @@ Za automatsko formatiranje i uklanjanje bespotrebnih importova potrebno je unuta
 
 Pravila za formatiranje koda već su definirana unutar `.prettierrc` datoteke, a Prettier će ih sam interpretirati na automatskom formatiranju pa ne dolazi do razlike u pisanju koda kod različitih ljudi.
 
+Preporučaju se ove postavke za Prettier:
+
+```json
+{
+  "trailingComma": "none",
+  "tabWidth": 2,
+  "semi": true,
+  "singleQuote": false,
+  "printWidth": 80
+}
+```
+
 ## Uvod
 
 Struktura projekta podijeljena je na tri dijela: `admin`, `user` i `shared`.
