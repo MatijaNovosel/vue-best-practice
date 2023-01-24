@@ -32,6 +32,7 @@ Opisuju se ujedno i tehnički detalji i oni koji se tiču stiliziranja koda.
 - [Validacija](#validacija)
   - [validation-observer](#validation-observer)
   - [validation-provider](#validation-provider)
+  - [Greške kod validacije](#greške-kod-validacije)
 - [Vuetify](#vuetify)
   - [Grid sistem](#grid-sistem)
   - [v-list](#v-list)
@@ -115,7 +116,7 @@ Unutar shared direktorija nalaze se datoteke koje su potrebne na globalnoj razin
 
 - Imena datoteka Viewova, komponenta i modela se pišu u PascalCasu, imena typescript/javascript datoteke i datoteka modela u camelCasu
 - Ako moguće, uvijek koristiti klase i izbjegavati inline stiliziranje
-- Koristiti gotove **Vuetify** CSS klase ako postoje za određenu situaciju, ako ne onda napisati svoje u globalnoj css datoteci `site.css`
+- Koristiti gotove **Vuetify** CSS klase ako postoje za određenu situaciju, ako ne onda napisati svoje u globalnoj css datoteci `site.css` ili pod kojim god imenom je deklarirano
 - CSS klase, id-evi, propovi, emitovi i slično pišu se isključivo u kebab-casu
 - Uvijek zatvarati elemente ako nemaju ničega u sebi
 - Ako element ima nešto u sebi onda posložiti na smisleni način i odvojiti s `\n` kako sve nebi bilo u jednom redu
@@ -141,8 +142,8 @@ interface nekiModel {
   class="nekaKlasa klasa2"
   @nekiEmit="funkcija"
   nekiProp="xyz"
-  ><dijeteKomponenta
-/></imeNekeKomponente>
+  ><dijeteKomponenta></dijeteKomponenta
+></imeNekeKomponente>
 ```
 
 </td>
@@ -294,7 +295,7 @@ const sum = items.reduce((acc, item) => acc + item.amount, 0);
 </tr>
 </table>
 
-- Koristiti `computed` umjesto funkcija koje vraćaju neku pretvorenu vrijednost, barem za reaktivne vrijednosti
+- Koristiti `computed` umjesto funkcija koje vraćaju neku pretvorenu vrijednost, barem za **reaktivne** vrijednosti
 
 <table>
 <tr align="center">
@@ -610,16 +611,6 @@ const state: State = reactive({
 
 Ako je potrebno uvjetovano prikazati više elemenata, wrappati ih unutar `<template>` komponente jer ona ne utječe na DOM.
 
-```html
-<template v-if="uvjet1">
-  <komponenta-a />
-  <komponenta-b />
-</template>
-<komponenta-c v-else-if="uvjet2" />
-<komponenta-d v-else-if="uvjet3" />
-<komponenta-e v-else />
-```
-
 <table>
 <tr align="center">
 <td> 🟥 </td> <td> 🟩 </td>
@@ -777,6 +768,10 @@ Svaki `validation-provider` mora imati definiran `vid`, `name`, `rules` i exposa
 Svaki `vid` mora biti jedinstven, kao i `name` prop jer u protivnom dolazi do poremećaja u validaciji.
 
 Iako je naveden `label` prop kod polja, mora biti naveden i u overridanom slotu za label ako je potrebno da polje bude `required`.
+
+## Greške kod validacije
+
+Najčešće greške kod validacije su `vid`-ovi koji nisu jedinstveni, tako da je potrebno osigurati da svaki `vid` polja za validaciju bude takav.
 
 ## Vuetify
 
