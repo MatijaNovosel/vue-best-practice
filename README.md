@@ -228,6 +228,37 @@ const funkcija = async () => {
 </table>
 
 - Tipizirati povratne tipove funkcija i varijable, osim naravno u slučajevima gdje je evidentno koji je povratni tip iz intellisensa
+- Koristiti `interface` za definicije modela rađe nego `type`, razlika objašnjena [ovdje](https://blog.devgenius.io/interfaces-vs-types-in-typescript-7567ffe390cd#:~:text=While%20type%20aliases%20and%20interfaces,be%20indirectly%20extended%20via%20intersections.)
+
+<table>
+<tr align="center">
+<td> 🟥 </td> <td> 🟩 </td>
+</tr>
+<tr>
+<tr>
+<td>
+
+```typescript
+export type Props = {
+  name: string;
+  count: number;
+};
+```
+
+</td>
+<td>
+
+```typescript
+export interface Props {
+  name: string;
+  count: number;
+}
+```
+
+</td>
+</tr>
+</table>
+
 - Ako se servis koristi na više mjesta unutar datoteke onda ga postaviti jednom na vrhu i pozivati funkcije preko varijable kojom je definiran, a ne pojedinačnim instanciranjem tog servisa i njegovih funkcija
 
 <table>
