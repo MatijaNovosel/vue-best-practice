@@ -608,6 +608,32 @@ Ako je potrebno uvjetovano prikazati više elemenata, wrappati ih unutar `<templ
 <komponenta-e v-else />
 ```
 
+<table>
+<tr align="center">
+<td> 🟥 </td> <td> 🟩 </td>
+</tr>
+<tr>
+<tr>
+<td>
+
+```html
+<komponenta-a v-if="uvjet" /> <komponenta-b v-if="uvjet" />
+```
+
+</td>
+<td>
+
+```html
+<template v-if="uvjet">
+  <komponenta-a />
+  <komponenta-b />
+</template>
+```
+
+</td>
+</tr>
+</table>
+
 ## Petlje
 
 Obavezno navesti `key` prop kod `v-for` petlje, po mogućnosti koristiti neki property od izvora podataka koji se iterira. Ako to nije mogućnost, onda koristiti drugi parametar prilikom iteracije tj. index.
