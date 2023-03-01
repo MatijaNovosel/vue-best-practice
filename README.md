@@ -359,6 +359,36 @@ const itemsFiltered = computed(() => items.map((n) => n ** 2));
 </tr>
 </table>
 
+- Uvijek koristiti `await`, rađe nego ulančavanje `then` callbacka prilikom asinkronih operacija
+
+<table>
+<tr align="center">
+<td> 🟥 </td> <td> 🟩 </td>
+</tr>
+<tr>
+<tr>
+<td>
+
+```typescript
+funkcija(1).then((res) => {
+  console.log(res);
+  const x = operacija(3);
+});
+```
+
+</td>
+<td>
+
+```typescript
+const res = await funkcija(1);
+console.log(res);
+const x = operacija(3);
+```
+
+</td>
+</tr>
+</table>
+
 - Uvijek koristiti `T[]` kod definicije tipova polja umjesto `Array<T>`
 - Redoslijed propova bi idealno trebao ići ovako:
 
