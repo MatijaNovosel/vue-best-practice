@@ -82,7 +82,7 @@ Preporučaju se ove postavke za Prettier:
 
 ## Uvod
 
-Napomena: ovaj dio odnosi se na sami KSF projekt - ne na programiranje generalno. 
+Napomena: ovaj dio odnosi se na sami KSF projekt - ne na programiranje generalno.
 
 Struktura projekta podijeljena je na tri dijela: `admin`, `user` i `shared`.
 
@@ -762,6 +762,8 @@ Za prijevode koristi se [i18n](https://kazupon.github.io/vue-i18n/) package.
 
 ## Validacija
 
+### Vue 2
+
 Za validaciju koristi se component-based [vee-validate](https://vee-validate.logaretm.com/v3/guide/basics.html) library.
 
 U tu svrhu definirane su dvije globalne komponente: `validation-observer` i `validation-provider`. Prvo se koristi kao wrapper (forma) niza polja, tj. `validation-provider`-a, dok se drugo koristi kao jedinica za validaciju tj. polje.
@@ -805,7 +807,7 @@ Svaki skup polja mora biti unutar točno određene forme, primjerice:
 
 Svaka forma mora imati gumb s propom `type` postavljen na `submit`, **ne kombinirajući to s `@click` direktivom**.
 
-### validation-observer
+#### validation-observer
 
 Kod `validation-observer`-a potrebno je napraviti `ref` kako bi se forma mogla resetirati naknadno, navesti prop `slim` radi manje natrpanog DOM-a i exposati `handleSubmit` funkciju pomoću `v-slot`-a kako bi se mogla izvršiti radnja asocirana sa slanjem te forme.
 
@@ -824,13 +826,50 @@ formRef.value?.reset();
 
 Svaka referenca je potencijalno nullabilna pa se i taj slučaj mora očekivati.
 
-### validation-provider
+#### validation-provider
 
 Svaki `validation-provider` mora imati definiran `vid`, `name`, `rules` i exposati ostale propertye po potrebi preko `v-slot`-a.
 
 Svaki `vid` mora biti jedinstven, kao i `name` prop jer u protivnom dolazi do poremećaja u validaciji.
 
 Iako je naveden `label` prop kod polja, mora biti naveden i u overridanom slotu za label ako je potrebno da polje bude `required`.
+
+### Vue 3
+
+Kod Vue 3, sintaksa je malo drukčija unatoč tome što se koristi isti package.
+
+Opet se koriste dvije komponente - `vv-field` i `vv-form` gdje `vv-field` prikazuje pojedinačni podatak, dok `vv-form` prikazuje skup polja tj. formu, primjerice:
+
+```html
+<vv-form as="v-form" @submit="submitForm">
+  <v-row>
+    <v-col cols="12">
+      <vv-field
+        v-slot="{ field, errors }"
+        name="language"
+        label="Language"
+        rules="required"
+      >
+        <v-select
+          v-bind="field"
+          v-model="state.model"
+          :items="[]"
+          :error-messages="errors"
+          hide-details="auto"
+          item-title="text"
+          item-value="value"
+          clearable
+        >
+          <template #label>
+            <required-icon />
+            Language
+          </template>
+        </v-select>
+      </vv-field>
+    </v-col>
+  </v-row>
+</vv-form>
+```
 
 ## Greške kod validacije
 
