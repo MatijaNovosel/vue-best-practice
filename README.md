@@ -82,6 +82,8 @@ Preporučaju se ove postavke za Prettier:
 
 ## Uvod
 
+Napomena: ovaj dio odnosi se na sami KSF projekt - ne na programiranje generalno. 
+
 Struktura projekta podijeljena je na tri dijela: `admin`, `user` i `shared`.
 
 ### Admin i user
