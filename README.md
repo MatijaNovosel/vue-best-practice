@@ -847,6 +847,7 @@ Opet se koriste dvije komponente - `vv-field` i `vv-form` gdje `vv-field` prikaz
   <v-row>
     <v-col cols="12">
       <vv-field
+        v-model="state.model"
         v-slot="{ field, errors }"
         name="language"
         label="Language"
