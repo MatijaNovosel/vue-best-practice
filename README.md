@@ -437,9 +437,9 @@ interface State {
 }
 
 // 2
-const props = defineProps({
-  id: Number
-});
+const props = defineProps<{
+  id: number;
+}>();
 
 // 3
 const emit = defineEmits(["select-item", "do-something"]);
@@ -507,41 +507,25 @@ defineComponent({
 
 #### Vue 3
 
-Definiraju se unutar `defineProps` funkcije koja je dostupna top-level, koristi se navedena sintaksa jer je pristup koji koristi generiku malo [preopširan](https://vuejs.org/guide/typescript/composition-api.html#typing-component-props) i treba više boilerplata kako bi se definirale defaultne vrijednosti.
+Definiraju se unutar generičkog parametra `defineProps` funkcije koja je dostupna top-level, [više informacija ovdje](https://vuejs.org/guide/typescript/composition-api.html#typing-component-props).
 
 ```typescript
 // Lijeva strana se ne mora pisati ako se propovi ne koriste u <script>
-const props = defineProps({
-  name: {
-    type: String,
-    required: true,
-    default: "No name"
-  }
-});
+const props = defineProps<{
+  name: string;
+}>();
 ```
 
 Propove je uvijek potrebno pisati u camelCasu kad ih se definira unutar komponente, a u kebab-casu kad se navode na sučelju.
 
 ```typescript
-defineProps({
-  personName: {
-    type: String,
-    default: ""
-  }
-});
+defineProps<{
+  personName: string;
+}>();
 ```
 
 ```html
 <person-details person-name="Branko" />
-```
-
-Ako nema potrebe za ostalim propertyima kod definicije propova, onda se može ostaviti samo tip:
-
-```typescript
-defineProps({
-  name: String,
-  id: Number
-});
 ```
 
 **Nadalje se neće odavajati sintaksa po Vue verzijama jer je definiranje propova identično.**
@@ -552,40 +536,7 @@ Nije potrebno pisati dodatni `interface` za propove jer se svi tipovi već znaju
 
 Primitivni tipovi koji postoje su: `Number`, `String`, `Boolean`, dok se za definiranje kompliciranijih tipova (`Function`,`Object`,`Array`,`Symbol`,`Date`) koristi wrappanje s `PropType<T>` u kombinaciji s odgovarajućim tipom.
 
-Po defaultu svaki prop kod kojeg nije naveden `required` na `true` biti će spojen s tipom `undefined`, potrebno je prikladno handlati takvu situaciju iako se inače preporuča što više koristiti neku defaultnu vrijednost.
-
-#### Object
-
-Ako je potrebno da `Object` tip propa bude nullabilan onda obavezno koristiti `|` operator i defaultno stanje propa na `null`.
-
-```typescript
-interface Person {
-  name: string;
-  surname: string;
-}
-
-defineProps({
-  person: {
-    type: Object as PropType<Person | null>,
-    default: null
-  }
-});
-```
-
-#### Array
-
-```typescript
-interface Person {
-  name: string;
-  surname: string;
-}
-
-defineProps({
-  people: {
-    type: Array as PropType<Person[]>
-  }
-});
-```
+Po defaultu svaki prop kod kojeg nije naveden kao nullish tj. s oznakom `?` je required.
 
 ## Emitovi
 
