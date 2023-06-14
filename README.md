@@ -528,6 +528,19 @@ defineProps<{
 <person-details person-name="Branko" />
 ```
 
+Ako je potrebno postaviti defaultne vrijednosti, treba koristiti `withDefaults` funkciju:
+
+```typescript
+const props = withDefaults(
+  defineProps<{
+    personName: string;
+  }>(),
+  {
+    personName: "Branko"
+  }
+);
+```
+
 **Nadalje se neće odavajati sintaksa po Vue verzijama jer je definiranje propova identično.**
 
 ### Tipiziranje
