@@ -442,7 +442,10 @@ const props = defineProps<{
 }>();
 
 // 3
-const emit = defineEmits(["select-item", "do-something"]);
+const emit = defineEmits<{
+  (e: "select-item", id: number): void;
+  (e: "do-something"): void;
+}>();
 
 // 4
 const router = useRouter();
@@ -573,7 +576,9 @@ Definiraju se unutar `defineEmits` funkcije, a pozivaju povratnom vrijednošću 
 
 ```typescript
 // Lijeva strana se ne mora pisati ako se emitovi ne koriste u <script>
-const emit = defineEmits(["show-details"]);
+const emit = defineEmits<{
+  (e: "show-details", id: number): void;
+}>();
 emit("show-details", 1);
 ```
 
@@ -588,6 +593,8 @@ const showDetails = (id: number) => {
   console.log(id);
 };
 ```
+
+Tipiziranje emitova radi se unutar generičkog parametra funkcije `defineEmits` započevši s imenom eventa i onda popisom parametara koji se predaju.
 
 ## Reaktivno stanje
 
